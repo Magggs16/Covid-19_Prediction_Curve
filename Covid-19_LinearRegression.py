@@ -6,12 +6,16 @@ from sklearn.linear_model import LinearRegression
 from sklearn.svm import SVR
 from sklearn.model_selection import train_test_split
 
-df = pd.read_csv('covid_19_WORLD.csv',parse_dates=['Date'])
+df = pd.read_csv('covid_19_US.csv',parse_dates=['Date'])
 df = df.groupby('Date').sum()['Confirmed'].reset_index()
+df.Date = pd.to_datetime(df.Date)
+df.set_index('Date', inplace=True)
 dfc = df[['Confirmed']]
+
 print(dfc)
+
 #predict n days out into the future
-forecast_out = 7
+forecast_out = 1
 
 #create another column target variable
 dfc['Prediction'] = dfc[['Confirmed']].shift(-forecast_out)
@@ -55,18 +59,15 @@ print(x_forecast)
 lr_prediction = lr.predict(x_forecast)
 print(lr_prediction)
 
+
 plt.figure(figsize=(16,8))
-
-dfc.columns = ['dt','y']
-dfc['dt'] = pd.to_datetime(dfc['dt'])
-
 
 plt.title('Curve Prediction')
 plt.xlabel('Date')
 plt.ylabel('Cases')
 
 plt.plot(dfc)
-plt.plot(lr_prediction)
-plt.legend()
+plt.plot()
+
 plt.show()
 
